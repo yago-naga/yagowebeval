@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	id="WebApp_ID" version="2.5">
+	<display-name>yagowebeval</display-name>
+	<servlet>
+		<servlet-name>ClickServlet</servlet-name>
+		<servlet-class>org.apache.click.ClickServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ClickServlet</servlet-name>
+		<url-pattern>*.htm</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>web initialiser</description>
+		<display-name>initialiser</display-name>
+		<servlet-name>initialiser</servlet-name>
+		<servlet-class>de.mpii.yago.web.WebInitialiser</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<welcome-file-list>
+		<welcome-file>redirect.html</welcome-file>
+	</welcome-file-list>
+</web-app>

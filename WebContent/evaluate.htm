@@ -1,0 +1,62 @@
+#if ($done == true)
+<div>The evaluation is done! Thanks for participating! Have a look at the <a href="standings.htm">standings</a>.</div>
+#else
+
+<div style="float:right;font-size:9pt">Evaluating YAGO2 Facts as $username</div>
+
+<div style="float:right;font-size:9pt;width:350px;color:#CCCCCC">Extraction technique:<br />$fact.getTechnique()</div>
+
+<form>
+<input type="hidden" name="evaluation_target" value="${fact.getEvaluationTarget()}" />
+<input type="hidden" name="username" value="${username}" />
+
+<table>
+	<tr>
+	  <th colspan="3"></th><th>right</th><th>wrong</th><th>ignore</th><th><a href="help.html" onclick="window.open (this.href, 'child', 'height=525,width=450,scrollbars'); return false">help</a></th>
+	</tr>
+	<tr>
+		<td colspan="3">$fact.getHumanReadable()</td>
+		<td class="eval"><input type="radio" name="fact_$fact.getId()" value="@right" checked /></td>
+		<td class="eval"><input type="radio" name="fact_$fact.getId()" value="@wrong" /></td>
+		<td class="eval"><input type="radio" name="fact_$fact.getId()" value="@ignore" /></td>
+		<td class="eval"></td>
+	</tr>
+#if (!$relatedFacts.isEmpty)
+	#foreach( $r in $relatedFacts )
+    <tr>
+    	<td style="width:50px"></td>
+    	<td>$r.getHumanReadableRelation()</td>
+    	<td>$r.getHumanReadableArg2()</td>
+    	<td class="eval"><input type="radio" name="fact_$r.getId()" value="@right" checked /></td>
+		<td class="eval"><input type="radio" name="fact_$r.getId()" value="@wrong" /></td>
+		<td class="eval"><input type="radio" name="fact_$r.getId()" value="@ignore" /></td>
+		<td class="eval"></td>
+    </tr>
+	#end
+	
+#end
+</table>
+$submit 
+</form>
+
+<h2>Entity Descriptions</h2>
+<p style="font-style:italic">scroll down for all descriptions</p>
+
+#foreach( $e in $entityDescriptions.keySet() )
+
+#if (!$e.startsWith("#"))
+
+<h3>$e</h3>
+
+	#set ($eDesc = $entityDescriptions.get($e))
+	#if ($eDesc.startsWith("http:"))
+	<iframe src="$eDesc">No iframe.</iframe>
+	#else
+	<p>$eDesc</p>
+	#end
+
+#end
+
+#end
+
+#end

@@ -1,0 +1,32 @@
+<h2>Overall State of the Evaluation</h2>
+
+<p>$correctFraction% of $numberEval evaluations were judged to be correct. This gives a weighted average Wilson center of $avgWilsonCenter% ($avgWilsonWidth % width)</p>
+
+<h2>Contributors to the YAGO2 Evaluation</h2>
+
+$usersTable
+
+<h2>Evaluation Results for Relations</h2>
+
+$relationsTable
+
+<!--  <h2>Evaluation Results for Techniques</h2>
+
+$techniquesTable -->
+
+<h2>Inter-Annotator Agreement</h2>
+
+#set ($greenWidth = $progress * 150)
+#set ($redWidth = (1-$progress) * 150)
+
+<ul>
+	<li>Total facts evaluated by two users: $totalDouble</li>
+	<li>Agreement Percentage: $agreement%</li>
+	<li>Kappa: $kappa</li>
+	<li>Progres: 
+		<div style="width:160px">
+			<div style="float:left;background-color:green;width:${greenWidth}px" >&nbsp;</div>
+			<div style="float:left;background-color:red;width:${redWidth}px" >&nbsp;</div>
+     	</div>
+     </li>
+</ul>
