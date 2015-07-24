@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import javatools.parsers.Char;
 import de.mpii.yago.web.evaluation.util.FactComponent;
 import de.mpii.yago.web.evaluation.util.YagoDatabase;
@@ -134,6 +136,6 @@ public class Fact {
   }
 
   public void setTechnique(String technique) {
-    this.technique = technique;
+    this.technique = StringEscapeUtils.escapeHtml(technique);
   }
 }

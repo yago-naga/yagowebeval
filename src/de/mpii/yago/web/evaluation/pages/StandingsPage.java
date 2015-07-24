@@ -39,7 +39,7 @@ public class StandingsPage extends BasePage {
       getLogger().error("Could not initialize DB", e);
     }
         
-    addModel("title", "YAGO2 Evaluation - Current Standings");
+    addModel("title", "YAGO3 Evaluation - Current Standings");
     
     relationsTable.setClass(Table.CLASS_ITS); 
     relationsTable.setSortable(true);

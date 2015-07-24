@@ -14,7 +14,7 @@ public class EvaluationSetup {
    * @throws Exception 
    */
   public static void main(String[] args) throws Exception {
-    String[] sqlQueries = {
+    /*String[] sqlQueries = {
         "DROP TABLE IF EXISTS facts_tech_rel_sorted",
         "DROP TABLE IF EXISTS facts_tech_rel_meta",
         "DROP TABLE IF EXISTS facts_rel_tech_sorted",
@@ -49,6 +49,6 @@ public class EvaluationSetup {
     
     DataManager.releaseConnection(con);
     
-    Announce.done();
+    Announce.done();*/
   }
 }

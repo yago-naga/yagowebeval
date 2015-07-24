@@ -4,6 +4,6 @@ public class IndexPage extends BasePage {
 
   public IndexPage() {
     super();
-    addModel("title", "YAGO2 Evaluation");
+    addModel("title", "YAGO3 Evaluation");
   }
 }

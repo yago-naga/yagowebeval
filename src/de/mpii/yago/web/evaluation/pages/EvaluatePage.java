@@ -35,7 +35,7 @@ public class EvaluatePage extends BasePage {
       getLogger().error("Could not initialize DB", e);
     }
     
-    addModel("title", "YAGO2 Evaluation - Judge The Fact");
+    addModel("title", "YAGO3 Evaluation - Judge The Fact");
     
     addControl(new Submit("submit", this, "onFactEvaluation"));
   }
@@ -148,8 +148,16 @@ public class EvaluatePage extends BasePage {
     // it's a real entity
     String unnormEntity = FactComponent.stripBrackets(entity.replace('_', ' '));
     
-    if (ydb.isEconomicRelation(relation)) return ("<IFRAME width='80%' height='1000px' src='http://en.wikipedia.org/wiki/Economy_of_" + Char.encodePercentage(unnormEntity) + "' >NO IFRAME SUPPORT</IFRAME>");
+    // match <language code>/<entity> (for example de/Bundeskanzler)
+    int idx = unnormEntity.indexOf("/");
+    String languageCode = "en";
+    if(idx >= 0) {
+        languageCode = unnormEntity.substring(0, idx);
+        unnormEntity = unnormEntity.substring(idx+1);
+    }
+    
+    if (ydb.isEconomicRelation(relation)) return ("<IFRAME width='80%' height='1000px' src='http://" + languageCode + ".wikipedia.org/wiki/Economy_of_" + Char.encodePercentage(unnormEntity) + "' >NO IFRAME SUPPORT</IFRAME>");
     // Wikipedia entities: Load Wikipedia page
-    return ("<IFRAME width='80%' height='1000px' src=\"http://en.wikipedia.org/wiki/" + Char.encodePercentage(unnormEntity) + "\" >Error: Your browser is from the stone age. Try again with a new browser. </IFRAME>");
+    return ("<IFRAME width='80%' height='1000px' src=\"http://" + languageCode + ".wikipedia.org/wiki/" + Char.encodePercentage(unnormEntity) + "\" >Error: Your browser is from the stone age. Try again with a new browser. </IFRAME>");
   }
 }

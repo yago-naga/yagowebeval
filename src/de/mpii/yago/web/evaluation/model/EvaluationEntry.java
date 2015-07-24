@@ -2,6 +2,8 @@ package de.mpii.yago.web.evaluation.model;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import de.mpii.yago.web.evaluation.util.EvaluationManager;
 
 
@@ -51,7 +53,7 @@ public class EvaluationEntry {
 
   
   public void setTechnique(String technique) {
-    this.technique = technique;
+    this.technique = StringEscapeUtils.escapeHtml(technique);
   }
 
   

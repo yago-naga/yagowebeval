@@ -27,6 +27,7 @@ import mpi.database.DataManager;
 import mpi.database.interfaces.DBPreparedStatementInterface;
 import mpi.database.interfaces.DBStatementInterface;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -265,11 +266,11 @@ public class YagoDatabase {
     Queue<Fact> result = new ArrayQueue<Fact>();
     try {
       StringBuffer query = new StringBuffer("SELECT first,count FROM facts_rel_tech_meta fs WHERE " + PREDICATE + "=");
-      query.append("'" + relation + "'");
+      query.append("'" + StringEscapeUtils.escapeSql(relation) + "'");
       //    for (String technique : separateTechniques)
       //      query.append(" AND fs.technique<>").append("'"+technique+"'");
       for (String technique : excludeTechniques)
-        query.append(" AND fs.technique<>").append("'" + technique + "'");
+        query.append(" AND fs.technique<>").append("'" + StringEscapeUtils.escapeSql(technique) + "'");
 
       query.append(" AND fs.technique NOT LIKE '\"RuleExtractor%'");
       con = DataManager.getConnection("randomRelations");
@@ -377,7 +378,7 @@ public class YagoDatabase {
     Queue<Fact> result = new ArrayQueue<Fact>();
     try {
       StringBuffer query = new StringBuffer("SELECT first,count FROM facts_tech_rel_meta WHERE technique=");
-      query.append("E'" + technique + "'");
+      query.append("E'" + StringEscapeUtils.escapeSql(technique) + "'");
       con = DataManager.getConnection("randomTechniques");
       DBStatementInterface stmt = con.getStatement();
       ResultSet dbResults = stmt.executeQuery(query.toString());
@@ -453,7 +454,7 @@ public class YagoDatabase {
     try {
       StringBuilder query = new StringBuilder("SELECT " + ID + "," + PREDICATE + "," + OBJECT + " FROM " + FACTS_TABLE + " WHERE " + SUBJECT + "='" + fact.getId() + "'");
       for (String relation : excludeRelations)
-        query.append(" AND " + PREDICATE + "<>").append("'" + relation + "'");
+        query.append(" AND " + PREDICATE + "<>").append("'" + StringEscapeUtils.escapeSql(relation) + "'");
       con = DataManager.getConnection("relatedFacts");
       DBStatementInterface stmt = con.getStatement();
       ResultSet dbResults = stmt.executeQuery(query.toString());
@@ -480,7 +481,7 @@ public class YagoDatabase {
     try {
       con = DataManager.getConnection("gloss");
       DBStatementInterface stmt = con.getStatement();
-      ResultSet rs = stmt.executeQuery("SELECT " + OBJECT + " FROM " + FACTS_TABLE + " WHERE " + PREDICATE + "='" + relation + "' AND " + SUBJECT + "='" + arg1 + "'");
+      ResultSet rs = stmt.executeQuery("SELECT " + OBJECT + " FROM " + FACTS_TABLE + " WHERE " + PREDICATE + "='" + StringEscapeUtils.escapeSql(relation) + "' AND " + SUBJECT + "='" + StringEscapeUtils.escapeSql(arg1) + "'");
       if (rs.next()) {
         arg2 = rs.getString(OBJECT);
       }
@@ -644,7 +645,7 @@ public class YagoDatabase {
       //          "GROUP BY factid " + "HAVING COUNT(factid) = 1) cc " + "INNER JOIN evaluation e ON e.factid = cc.factid " + "WHERE e.username<>'" + excludedUser + "'" + "ORDER BY RANDOM()";
       String query = "SELECT e." + SUBJECT + ",e." + PREDICATE + ",e." + OBJECT + ",e.factid,e.target,e.technique FROM " + "(SELECT COUNT(factid) AS fid, factid FROM evaluation " + "WHERE NOT " + SUBJECT + " LIKE '#%'"
           + "AND (eval='@right' OR eval='@wrong') " + "AND predicate not in (SELECT value from evaluation_settings where key = 'exclude_relation') " + "AND technique not in (SELECT value from evaluation_settings where key = 'exclude_technique') "
-          + "GROUP BY factid " + "HAVING COUNT(factid) = 1) cc " + "INNER JOIN evaluation e ON e.factid = cc.factid " + "WHERE e.username<>'" + excludedUser + "'" + "ORDER BY RANDOM()";
+          + "GROUP BY factid " + "HAVING COUNT(factid) = 1) cc " + "INNER JOIN evaluation e ON e.factid = cc.factid " + "WHERE e.username<>'" + StringEscapeUtils.escapeSql(excludedUser) + "'" + "ORDER BY RANDOM()";
       ResultSet rs = stmt.executeQuery(query);
       if (rs.next()) {
         f = new Fact(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
@@ -671,14 +672,14 @@ public class YagoDatabase {
       StringBuilder query = new StringBuilder("SELECT DISTINCT " + PREDICATE + " FROM facts_rel_tech_meta");
       String appendWord = "WHERE";
       for (String technique : excludeTechniques) {
-        query.append(" " + appendWord + " technique<>").append("'" + technique + "'");
+        query.append(" " + appendWord + " technique<>").append("'" + StringEscapeUtils.escapeSql(technique) + "'");
         appendWord = "AND";
       }
       if (excludeTechniques.isEmpty()) {
         appendWord = "WHERE";
       }
       for (String relation : excludeRelations) {
-        query.append(" " + appendWord + " " + PREDICATE + "<>").append("'" + relation + "'");
+        query.append(" " + appendWord + " " + PREDICATE + "<>").append("'" + StringEscapeUtils.escapeSql(relation) + "'");
         appendWord = "AND";
       }
       ResultSet rs = stmt.executeQuery(query.toString());
@@ -709,7 +710,7 @@ public class YagoDatabase {
     try {
       con = DataManager.getConnection("domain");
       DBStatementInterface stmt = con.getStatement();
-      String query = "SELECT " + OBJECT + " FROM " + FACTS_TABLE + " WHERE " + PREDICATE + "='" + DOMAIN + "' AND " + SUBJECT + "='" + relation + "'";
+      String query = "SELECT " + OBJECT + " FROM " + FACTS_TABLE + " WHERE " + PREDICATE + "='" + DOMAIN + "' AND " + SUBJECT + "='" + StringEscapeUtils.escapeSql(relation) + "'";
       ResultSet rs = stmt.executeQuery(query);
       if (rs.next()) {
         domain = rs.getString(1);
@@ -727,7 +728,7 @@ public class YagoDatabase {
     try {
       con = DataManager.getConnection("range");
       DBStatementInterface stmt = con.getStatement();
-      String query = "SELECT " + OBJECT + " FROM " + FACTS_TABLE + " WHERE " + PREDICATE + "='" + RANGE + "' AND " + SUBJECT + "='" + relation + "'";
+      String query = "SELECT " + OBJECT + " FROM " + FACTS_TABLE + " WHERE " + PREDICATE + "='" + RANGE + "' AND " + SUBJECT + "='" + StringEscapeUtils.escapeSql(relation) + "'";
       ResultSet rs = stmt.executeQuery(query);
       if (rs.next()) {
         range = rs.getString(1);
@@ -754,7 +755,7 @@ public class YagoDatabase {
       DBStatementInterface stmt = con.getStatement();
 
       String query = "SELECT f1." + ID + " AS " + ID + ", f1." + SUBJECT + " AS " + SUBJECT + ", f1." + PREDICATE + " AS " + PREDICATE + ", f1." + OBJECT + " AS " + OBJECT + ", f3." + OBJECT + " AS technique " + "FROM " + FACTS_TABLE + " f1, "
-          + FACTS_TABLE + " f2, " + FACTS_TABLE + " f3 " + "WHERE f1." + ID + "='" + factId + "' " + "AND f2." + SUBJECT + "=f1." + ID + " " + "AND f3." + SUBJECT + "=f2." + ID + " " + "AND f3." + PREDICATE + "='" + USING + "'";
+          + FACTS_TABLE + " f2, " + FACTS_TABLE + " f3 " + "WHERE f1." + ID + "='" + StringEscapeUtils.escapeSql(factId) + "' " + "AND f2." + SUBJECT + "=f1." + ID + " " + "AND f3." + SUBJECT + "=f2." + ID + " " + "AND f3." + PREDICATE + "='" + USING + "'";
 
       ResultSet rs = stmt.executeQuery(query);
 
@@ -768,7 +769,7 @@ public class YagoDatabase {
       rs.close();
 
       if (e == null) {
-        System.err.println("Could not write evaluation for fact '" + factId + "'");
+        System.err.println("Could not write evaluation for fact '" + StringEscapeUtils.escapeSql(factId) + "'");
         return;
       }
 
@@ -796,7 +797,7 @@ public class YagoDatabase {
     try {
       con = DataManager.getConnection("storing");
       DBStatementInterface stmt = con.getStatement();
-      String query = "SELECT factid " + "FROM evaluation " + "WHERE factid='" + factId + "' " + "AND username='" + username + "'";
+      String query = "SELECT factid " + "FROM evaluation " + "WHERE factid='" + StringEscapeUtils.escapeSql(factId) + "' " + "AND username='" + StringEscapeUtils.escapeSql(username) + "'";
       ResultSet rs = stmt.executeQuery(query);
       if (rs.next()) {
         // each fact should be evaluated only by one user, and each
@@ -804,7 +805,7 @@ public class YagoDatabase {
         shouldStore = false;
       }
       rs.close();
-      query = "SELECT count(factid) " + "FROM evaluation " + "WHERE factid='" + factId + "'";
+      query = "SELECT count(factid) " + "FROM evaluation " + "WHERE factid='" + StringEscapeUtils.escapeSql(factId) + "'";
       rs = stmt.executeQuery(query);
       if (rs.next()) {
         int count = rs.getInt(1);
