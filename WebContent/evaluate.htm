@@ -2,9 +2,12 @@
 <div>The evaluation is done! Thanks for participating! Have a look at the <a href="standings.htm">standings</a>.</div>
 #else
 
-<div style="float:right;font-size:9pt">Evaluating YAGO3 Facts as $username</div>
-
-<div style="float:right;font-size:9pt;width:350px;color:#CCCCCC">Extraction technique:<br />$fact.getTechnique()</div>
+<div style="float:right;width:350px;">
+<div style="float:right;font-size:11pt">Evaluating YAGO3 Facts as $username</div>
+<br/>
+<br/>
+<div style="float:right; font-size:11pt;color:#444444">Extraction technique: $fact.getTechnique()</div>
+</div>
 
 <form>
 <input type="hidden" name="evaluation_target" value="${fact.getEvaluationTarget()}" />

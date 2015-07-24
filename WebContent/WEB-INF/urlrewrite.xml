@@ -13,7 +13,7 @@
 		<from>/yagowebeval/(.*)</from>
 		<to>/$1</to>
 	</rule>
-
+	
      <!-- <outbound-rule>
         <note>
             The outbound-rule specifies that when response.encodeURL is called (if you are using JSTL c:url)

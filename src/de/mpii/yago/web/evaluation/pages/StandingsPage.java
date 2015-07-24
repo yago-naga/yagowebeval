@@ -3,6 +3,10 @@ package de.mpii.yago.web.evaluation.pages;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,9 +56,11 @@ public class StandingsPage extends BasePage {
     relationsTable.addColumn(new Column("Wilson Width (%)"));
     Column progress = new Column("Progress");
     progress.setDecorator(new ProgressDecorator());
+    progress.setSortable(false);
     relationsTable.addColumn(progress);
     
-    relationsTable.setDataProvider(new StandingsProvider(EvaluationEntry.EVAL_TARGET_RELATION));
+    relationsTable.setDataProvider(new StandingsProvider(relationsTable, EvaluationEntry.EVAL_TARGET_RELATION));
+    relationsTable.setSorted(true);
        
     techniquesTable.setClass(Table.CLASS_ITS);
     techniquesTable.setSortable(true);
@@ -67,9 +73,10 @@ public class StandingsPage extends BasePage {
     techniquesTable.addColumn(new Column("Wilson Width (%)"));
     Column progress_tech = new Column("Progress");
     progress_tech.setDecorator(new ProgressDecorator());
+    progress_tech.setSortable(false);
     techniquesTable.addColumn(progress_tech);
     
-    techniquesTable.setDataProvider(new StandingsProvider(EvaluationEntry.EVAL_TARGET_TECHNIQUE));
+    techniquesTable.setDataProvider(new StandingsProvider(relationsTable, EvaluationEntry.EVAL_TARGET_TECHNIQUE));
     
     usersTable.setClass(Table.CLASS_ITS);
     usersTable.addColumn(new Column("User"));
@@ -165,14 +172,45 @@ public class StandingsPage extends BasePage {
 
   class StandingsProvider implements DataProvider<Map<String, String>> {
 
+    Table table;
     List<Map<String, String>> poolStanding;
     
-    public StandingsProvider(String evalulationTarget) {           
+    public StandingsProvider(Table table, String evalulationTarget) {           
+      this.table = table;
       poolStanding = ydb.groupEntriesByEvaluationTarget(entries, evalulationTarget);
     }
    
     @Override
     public Iterable<Map<String, String>> getData() {
+      Collections.sort(poolStanding, new Comparator<Map<String, String>>() {
+      List<String> numericColumns = Arrays.asList(
+          "Evaluations", "Correct", "Ratio (%)", 
+          "Wilson Center (%)", "Wilson Width (%)");
+      
+      String sortKey = table.getSortedColumn();
+      boolean sortAscending = table.isSortedAscending();
+      
+      @Override
+      public int compare(Map<String, String> one, Map<String, String> two) {
+        if(one == null || two == null) return 0;
+        if(!(one instanceof HashMap<?, ?>)) return 0; 
+        if(!(two instanceof HashMap<?, ?>)) return 0;
+        int compareValue = 0;
+        if(numericColumns.contains(sortKey)) {
+          System.out.println("numeric sort on " + sortKey);
+          String ratio1 = ((HashMap<String, String>) one).get(sortKey);
+          String ratio2 = ((HashMap<String, String>) two).get(sortKey); 
+          
+          if(ratio1 == null || ratio2 == null) return 0;
+          Double dratio1 = Double.parseDouble(ratio1);
+          Double dratio2 = Double.parseDouble(ratio2);
+          compareValue = dratio1.compareTo(dratio2);
+        } else { 
+           compareValue = one.get(sortKey).compareTo(two.get(sortKey));
+        }
+        return (sortAscending ? compareValue : -compareValue);
+      }
+    });
       return poolStanding;
     }
   }
