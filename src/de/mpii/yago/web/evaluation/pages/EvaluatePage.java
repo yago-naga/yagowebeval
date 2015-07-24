@@ -404,6 +404,7 @@ class WikiHelper {
 	}
 	
 	public String getWikipediaLanguageTitle(String srcLanguageCode, String dstLanguageCode, String entity) {
+		if(srcLanguageCode == null || dstLanguageCode == null || entity == null) return null;
 		StringBuilder urlbuilder = new StringBuilder();
 		urlbuilder.append("http://");
 		urlbuilder.append(srcLanguageCode);

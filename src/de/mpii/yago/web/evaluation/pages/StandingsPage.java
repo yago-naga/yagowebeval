@@ -183,31 +183,43 @@ public class StandingsPage extends BasePage {
     @Override
     public Iterable<Map<String, String>> getData() {
       Collections.sort(poolStanding, new Comparator<Map<String, String>>() {
-      List<String> numericColumns = Arrays.asList(
-          "Evaluations", "Correct", "Ratio (%)", 
+      List<String> numericColumns = Arrays.asList("Evaluations", "Correct", "Ratio (%)", 
           "Wilson Center (%)", "Wilson Width (%)");
       
       String sortKey = table.getSortedColumn();
       boolean sortAscending = table.isSortedAscending();
+      {
+    	  // default sorting
+    	  if(sortKey == null) {
+		      sortKey = "Wilson Center (%)";
+		      sortAscending = false;
+	      }
+      }
       
       @Override
       public int compare(Map<String, String> one, Map<String, String> two) {
+        // check arguments
         if(one == null || two == null) return 0;
         if(!(one instanceof HashMap<?, ?>)) return 0; 
         if(!(two instanceof HashMap<?, ?>)) return 0;
+        
+        String val1 = ((HashMap<String, String>) one).get(sortKey);
+        String val2 = ((HashMap<String, String>) two).get(sortKey); 
+
+        if(val1 == null || val2 == null) return 0;
+        
+        // do a numeric or string based comparison
         int compareValue = 0;
         if(numericColumns.contains(sortKey)) {
           System.out.println("numeric sort on " + sortKey);
-          String ratio1 = ((HashMap<String, String>) one).get(sortKey);
-          String ratio2 = ((HashMap<String, String>) two).get(sortKey); 
           
-          if(ratio1 == null || ratio2 == null) return 0;
-          Double dratio1 = Double.parseDouble(ratio1);
-          Double dratio2 = Double.parseDouble(ratio2);
-          compareValue = dratio1.compareTo(dratio2);
+          Double ratio1 = Double.parseDouble(val1);
+          Double ratio2 = Double.parseDouble(val2);
+          compareValue = ratio1.compareTo(ratio2);
         } else { 
-           compareValue = one.get(sortKey).compareTo(two.get(sortKey));
+           compareValue = val1.compareTo(val2);
         }
+        
         return (sortAscending ? compareValue : -compareValue);
       }
     });
