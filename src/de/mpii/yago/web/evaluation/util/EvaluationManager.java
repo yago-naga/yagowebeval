@@ -36,7 +36,7 @@ public class EvaluationManager {
 
   private static EvaluationTarget currentTarget;
 
-  // holds relation or technique  
+  // holds relation or technique
   private static String currentEvaluationTarget;
 
   private static int remainingFactsForCurrentTarget = 0;
@@ -45,7 +45,7 @@ public class EvaluationManager {
 
   /**
    * Fills factsToEvaluate with a new fact for evaluation
-   * 
+   *
    * @param excludedUser    Current user, if a new fact is fetched for evaluating annotator-agreement, this is used
    * @param factsToEvaluate This will contain a fact to evaluate if return is false
    * @return  true if the evaluation is done (no fact will be added to factsToEvaluate), false otherwise
@@ -193,7 +193,8 @@ public class EvaluationManager {
     return remainingSubTargets;
   }
 
-  private static Map<String, Double> getProgressForEvaluationTarget(YagoDatabase ydb, Set<String> allTargets, String evalTarget, List<EvaluationEntry> evalEntries) {
+  private static Map<String, Double> getProgressForEvaluationTarget(YagoDatabase ydb, Set<String> allTargets, String evalTarget,
+      List<EvaluationEntry> evalEntries) {
     Map<String, Double> progress = new HashMap<String, Double>();
 
     for (String target : allTargets) {
@@ -210,8 +211,8 @@ public class EvaluationManager {
         int total = Integer.parseInt(evalTargetData.get("Evaluations"));
         int correct = Integer.parseInt(evalTargetData.get("Correct"));
         double targetPrgoress = Wilson.progress(total, correct);
-//        DO NOT USE following line as it has a rounding error.
-//        double targetPrgoress = Double.parseDouble(evalTargetData.get("Progress"));
+        //        DO NOT USE following line as it has a rounding error.
+        //        double targetPrgoress = Double.parseDouble(evalTargetData.get("Progress"));
         progress.put(target, targetPrgoress);
       }
     }
